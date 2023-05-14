@@ -1,20 +1,31 @@
+import UpdateIdeaForm from "./updateIdeaForm";
+import IdeaForm from "./IdeaForm";
+
 class Modal {
     #modal;
     #modalBtn;
+    
 
     constructor() {
         this.#modal = document.getElementById('modal');
         this.#modalBtn = document.getElementById('modal-btn');
-        this.addEventListeners();
+        this.addEvents();
     }
 
-    addEventListeners() {
+    addEvents() {
         this.#modalBtn.addEventListener('click', this.open.bind(this));
         window.addEventListener('click', this.outsideClick.bind(this));
         document.addEventListener('closemodal', this.close.bind(this));
+        document.addEventListener('openmodal', this.openUpdateForm.bind(this));
     }
 
     open() {
+        new IdeaForm();
+        this.#modal.style.display = 'block';
+    }
+
+    openUpdateForm() {
+        new UpdateIdeaForm();
         this.#modal.style.display = 'block';
     }
 

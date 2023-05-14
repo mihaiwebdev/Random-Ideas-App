@@ -41,13 +41,13 @@ router.post('/', protect, async(req, res) => {
 })
 
 // @desc Get single idea
-// @route /api/ideas/
+// @route /api/ideas/id
 // access public
 router.get('/:id', async(req, res) => {
     try {
-        const idea = await Idea.findById(req.params.id);
+       const idea = await Idea.findById(req.params.id);
+       return res.json({success: true, data: idea})
 
-        res.json({success: true, data: idea})
     } catch (error) {
         res.status(500).json('Something went wrong!');
         console.log(error);
@@ -55,7 +55,7 @@ router.get('/:id', async(req, res) => {
 })
 
 // @desc Update idea
-// @route /api/ideas/
+// @route /api/ideas/id
 // access private
 router.put('/:id', protect, async(req, res) => {
     try {
@@ -66,17 +66,16 @@ router.put('/:id', protect, async(req, res) => {
                 req.params.id, 
                 {
                     $set: {
-                        text: req.body.text,
-                        tag: req.body.tag,
+                        text: req.body.text || idea.text,
+                        tag: req.body.tag || idea.tag,
                     }
                 },
                 { new: true }
             );
-            res.json({success: true, data: updatedIdea});
+           return res.json({success: true, data: updatedIdea});
+        } 
 
-        } else {
-            res.status(400).json('Not authorized');
-        }
+        res.status(403).json('Not authorized');
 
     } catch (error) {
         res.status(500).json('Something went wrong!');
@@ -85,7 +84,7 @@ router.put('/:id', protect, async(req, res) => {
 })
 
 // @desc Delete idea
-// @route /api/ideas/
+// @route /api/ideas/id
 // access private
 router.delete('/:id', protect, async(req, res) => {
     try {
@@ -93,11 +92,10 @@ router.delete('/:id', protect, async(req, res) => {
         if (idea.user === req.user.email) {
 
             const deletedIdea = await Idea.findByIdAndDelete(req.params.id);
-            res.json({success: true, data: deletedIdea});
-
-        } else {
-            res.status(400).json('Not authorized');
-        }
+            return res.json({success: true, data: deletedIdea});
+        } 
+        
+        res.status(403).json('Not authorized');
 
     } catch (error) {
         res.status(500).json('Something went wrong!');

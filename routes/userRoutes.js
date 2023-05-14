@@ -36,7 +36,8 @@ router.post('/', async(req, res) => {
                     email: savedUser.email,
                     token: generateToken(user._id)
                 }
-
+                
+                localStorage.setItem('userInfo', JSON.stringify(data));
                 res.json({success: true, data});
             }
     
@@ -62,6 +63,7 @@ router.post('/login', async(req, res) => {
                 token: generateToken(user._id)
             };
 
+            localStorage.setItem('userInfo', JSON.stringify(data));
             res.json({success: true, data});
 
         } else {

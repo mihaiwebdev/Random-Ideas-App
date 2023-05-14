@@ -2,44 +2,44 @@ import IdeasApi from '../services/ideasApi';
 import IdeaList from './IdeaList';
 
 class IdeaForm {
-    #modalForm;
-    #form;
     #ideaList;
 
     constructor() {
-        this.#modalForm = document.getElementById('form-modal');
-        this.#form = '';   
+        this.modalForm = document.getElementById('form-modal');
         this.#ideaList = new IdeaList();
+        this.form = '';   
+        this.render();
     }
 
-    addEventListener() {
-        this.#form.addEventListener('submit', this.submitForm.bind(this));
+    addEvents() {
+        this.form.addEventListener('submit', this.submitForm.bind(this));
     }
 
     async submitForm(e) {
         e.preventDefault();
 
         const idea = {
-            text: this.#form.elements.text.value,
-            tag: this.#form.elements.tag.value,
+            text: this.form.elements.text.value,
+            tag: this.form.elements.tag.value,
         }
         
-        if (idea.text === '' || idea.tag === '') {
+        if (!idea.text || !idea.tag) {
             alert('Please fill in all fields');
+            return;
         }
         
         const { data } = await IdeasApi.createIdea(idea);
-        this.#ideaList.addIdeaToList(data.data);
+        this.#ideaList.getIdeas();
 
-        this.#form.elements.tag.value = '';
-        this.#form.elements.text.value = '';
+        this.form.elements.tag.value = '';
+        this.form.elements.text.value = '';
 
         document.dispatchEvent(new Event('closemodal'));
 
     }
 
     render() {
-        this.#modalForm.innerHTML = 
+        this.modalForm.innerHTML = 
         `<form id="idea-form">
             <div class="form-control">
                 <label for="idea-text">User: <span id=username>mihai</span></label>
@@ -55,8 +55,8 @@ class IdeaForm {
             <button class="btn" type="submit" id="submit">Submit</button>
         </form>`;
 
-        this.#form = document.getElementById('idea-form');
-        this.addEventListener();
+        this.form = document.getElementById('idea-form');
+        this.addEvents();
     }
 }
 
