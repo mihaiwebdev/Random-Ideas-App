@@ -25,11 +25,10 @@ router.post('/', protect, async(req, res) => {
     try {
         const idea = new Idea({
             text: req.body.text,
-            user: req.user.email,
+            user: String(req.user._id),
             username: req.user.name,
             tag: req.body.tag            
         });
-
         const savedIdea = await idea.save();
 
         res.json({success: true, data: savedIdea});
@@ -60,7 +59,8 @@ router.get('/:id', async(req, res) => {
 router.put('/:id', protect, async(req, res) => {
     try {
         const idea = await Idea.findById(req.params.id)
-        if (idea.user === req.user.email) {
+        
+        if (idea.user === String(req.user._id)) {
    
             const updatedIdea = await Idea.findByIdAndUpdate(
                 req.params.id, 
@@ -89,7 +89,7 @@ router.put('/:id', protect, async(req, res) => {
 router.delete('/:id', protect, async(req, res) => {
     try {
         const idea = await Idea.findById(req.params.id);
-        if (idea.user === req.user.email) {
+        if (idea.user === String(req.user._id)) {
 
             const deletedIdea = await Idea.findByIdAndDelete(req.params.id);
             return res.json({success: true, data: deletedIdea});

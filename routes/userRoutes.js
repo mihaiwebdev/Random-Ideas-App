@@ -37,7 +37,6 @@ router.post('/', async(req, res) => {
                     token: generateToken(user._id)
                 }
                 
-                localStorage.setItem('userInfo', JSON.stringify(data));
                 res.json({success: true, data});
             }
     
@@ -53,6 +52,7 @@ router.post('/login', async(req, res) => {
 
     try {
         const user = await User.findOne({email});
+     
         const comparePw = await bcrypt.compare(password, user.password);
 
         if (user && comparePw) {
@@ -63,7 +63,6 @@ router.post('/login', async(req, res) => {
                 token: generateToken(user._id)
             };
 
-            localStorage.setItem('userInfo', JSON.stringify(data));
             res.json({success: true, data});
 
         } else {

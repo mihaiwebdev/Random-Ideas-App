@@ -2,12 +2,10 @@ import IdeasApi from '../services/ideasApi';
 import IdeaList from './IdeaList';
 
 class IdeaForm {
-    #ideaList;
-
     constructor() {
         this.modalForm = document.getElementById('form-modal');
-        this.#ideaList = new IdeaList();
         this.form = '';   
+        this._user =  JSON.parse(localStorage.getItem('userInfo'));
         this.render();
     }
 
@@ -29,20 +27,21 @@ class IdeaForm {
         }
         
         const { data } = await IdeasApi.createIdea(idea);
-        this.#ideaList.getIdeas();
-
-        this.form.elements.tag.value = '';
-        this.form.elements.text.value = '';
-
-        document.dispatchEvent(new Event('closemodal'));
-
+        
+        if (data.success) {
+            new IdeaList();
+            this.form.elements.tag.value = '';
+            this.form.elements.text.value = '';
+    
+            document.dispatchEvent(new Event('closemodal'));
+        }
     }
 
     render() {
         this.modalForm.innerHTML = 
         `<form id="idea-form">
             <div class="form-control">
-                <label for="idea-text">User: <span id=username>mihai</span></label>
+                <label for="idea-text">User: <span id=username>${this._user ? this._user.name : ''}</span></label>
             </div>
             <div class="form-control">
                 <label for="idea-text">What's Your Idea?</label>

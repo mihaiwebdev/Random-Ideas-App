@@ -7,8 +7,8 @@ class UpdateIdeaForm {
 
     constructor() {
         this.#modalForm = document.getElementById('form-modal');
-        this.#form = '';
         this.idea = JSON.parse(localStorage.getItem('updateIdea'));
+        this.#form = '';
         this.render();
     }
 
@@ -32,6 +32,7 @@ class UpdateIdeaForm {
                 if (data.success) {
                     new IdeaList();
                 }
+
             } catch (error) {
                 console.log(error)
             }

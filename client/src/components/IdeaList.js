@@ -19,7 +19,6 @@ class IdeaList {
     }
 
     addEvents() {       
-        localStorage.setItem('userInfo', JSON.stringify({email: 'mihai@gmail.com'}))
         const deleteBtns = document.querySelectorAll('.delete');
         deleteBtns.forEach(btn => { 
             btn.addEventListener('click', this.deleteIdea.bind(this, btn.parentElement.id));
@@ -49,8 +48,9 @@ class IdeaList {
         if (window.confirm('Are you sure?')) {
             try {
                 const { data } = await IdeasApi.deleteIdea(id);
-                this.#ideas.filter(idea => idea._id !== id);
-                this.getIdeas();
+                if (data.success) {
+                    this.getIdeas();
+                }
 
             } catch (error) {
                 console.log(error)
@@ -82,11 +82,14 @@ class IdeaList {
         this.#ideaList.innerHTML = this.#ideas.map(idea => {
             const tagClass = this.getTagsClass(idea.tag);
             const user = JSON.parse(localStorage.getItem('userInfo'));
-            const displayBtn = user.email !== idea.user ? 'd-none' : ''
+            let displayBtn = 'd-none';
+            if (user && user._id === idea.user) {
+                displayBtn = ''
+            };
 
             return `<div class="card" id=${idea._id}>
                 <button class="${displayBtn} delete"><i class="fas fa-times"></i></button>
-                <button class="${displayBtn}edit"><i class="far fa-pen-to-square"></i></button>
+                <button class="${displayBtn} edit"><i class="far fa-pen-to-square"></i></button>
                 <h3>${idea.text}</h3>
                 <p class="tag ${tagClass}">${idea.tag.toUpperCase()}</p>
                 <p>
